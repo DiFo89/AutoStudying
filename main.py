@@ -10,7 +10,7 @@ from dotenv import load_dotenv, dotenv_values
 
 from webdriver_manager.chrome import ChromeDriverManager
 
-LECTION_TIME = datetime.time(10, 30)
+LECTION_TIME = datetime.time(18, 30, 25)
 
 logger2 = logging.getLogger(__name__)
 logger2.setLevel(logging.INFO)
@@ -79,6 +79,7 @@ async def main():
         now_time = now.time()
         if now_time > LECTION_TIME:
             logger2.info("Запущен вход в лекцию")
+            os.system("shutdown -s -t 7200")
             await open_lection()
             break
         logger2.info("Итерация проверки")
