@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common import NoAlertPresentException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -10,7 +11,7 @@ from dotenv import load_dotenv, dotenv_values
 
 from webdriver_manager.chrome import ChromeDriverManager
 
-LECTION_TIME = datetime.time(18, 30, 25)
+LECTION_TIME = datetime.time(12, 30, 25)
 
 logger2 = logging.getLogger(__name__)
 logger2.setLevel(logging.INFO)
@@ -49,6 +50,12 @@ async def open_lection():
             await asyncio.sleep(1)
             submit_button.click()
             await asyncio.sleep(2)
+            try:
+                alert = driver.switch_to.alert
+                alert.accept()
+            except NoAlertPresentException:
+                logger2.info("Нет всплывающего окна")
+            await asyncio.sleep(3)
             driver.get('https://stavmirea.ru/rasp_ochn.php')
             await asyncio.sleep(3)
             lection_buttons = driver.find_elements(by=By.CSS_SELECTOR, value='a.btn.btn-success')
@@ -79,7 +86,7 @@ async def main():
         now_time = now.time()
         if now_time > LECTION_TIME:
             logger2.info("Запущен вход в лекцию")
-            os.system("shutdown -s -t 7200")
+            #os.system("shutdown -s -t 7200")
             await open_lection()
             break
         logger2.info("Итерация проверки")
